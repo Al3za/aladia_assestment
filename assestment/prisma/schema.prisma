@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated"  // path where prisma is st
 }
 
 datasource db {
@@ -15,7 +15,7 @@ datasource db {
   directUrl = env("DATABASE_URL_UNPOOLED") // those errors is caused because of prisma extension that use -v 7
 }
 
-model User {
+model Employee {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String   
