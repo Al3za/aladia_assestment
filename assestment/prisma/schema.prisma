@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED") // those errors is caused because of prisma extension that use -v 7
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String   
+  roles     Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  INTERN
+  ENGINEER
+  ADMIN
+} // define user roles
+
+// use npx prisma migrate dev --name init to initialize the db and schemas.(migrations folder will appear in prisma folder). ps 'init' crea la prima migrazione (come git init)
+// migrate is like a github reference that tracks db changes, and update the db if we add a column 
+// in the table or create a new table. or go back to older commits 
+
+// use npx prisma db push to push the changes to the db without creating migration files
+
+// use deploy ideally used for production databases
+
+// everytime we make changes (adding new column or create new table) to the schema.prisma file 
+// we need to run first:
+// npx prisma generate command and then:
+// npx prisma migrate dev --name name_change(a different commit name), to save and commit db changes up to date w
+
+// -- migration transate prisma syntax to sql syntax (remember that if you comment the migration.file, it could be blocked you to generete another migration)
