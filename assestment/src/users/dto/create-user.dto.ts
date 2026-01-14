@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator'; // gives an error if you don 't follow the rules (ex if you write a not formatted email)
 
 export class CreateUserDto {
   @IsString()
