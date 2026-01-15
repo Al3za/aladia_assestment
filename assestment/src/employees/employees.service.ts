@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable } from '@nestjs/common';
-// import { Prisma } from 'generated/prisma/browser';
-import { DatabaseService } from '../database/database.service.js'; //'src/database/database.service.js'; //  here we talk to the database service
-import { CreateEmployeeDto } from './dto/create-employee.dto.js';
-import { UpdateEmployeeDto } from './dto/update-employee.dto.js';
-import { Role } from 'generated/prisma/enums.js';
-import { EmployeeRto } from './rto/employee.rto.js';
+import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { Role } from 'generated/prisma/enums';
+import { EmployeeRto } from './rto/employee.rto';
+//import { Prisma } from '@prisma/client'; can be used as DTO
 
 @Injectable()
 export class EmployeesService {
@@ -20,8 +20,6 @@ export class EmployeesService {
   }
 
   async findAll(role?: Role /*'INTERN' | 'ENGINEER' | 'ADMIN'*/) {
-    // replace all this with DTO
-
     if (role)
       return await this.databaseService.employee.findMany({
         where: {
@@ -42,7 +40,7 @@ export class EmployeesService {
 
     if (!employee) return null;
 
-    return EmployeeRto.fromPrisma(employee);
+    return EmployeeRto.fromPrisma(employee); // RTO
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
@@ -60,4 +58,3 @@ export class EmployeesService {
     });
   }
 }
-//console.log('EmployeesService loaded');

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { EmployeesService } from './employees.service.js';
-import { CreateEmployeeDto } from './dto/create-employee.dto.js';
-import { UpdateEmployeeDto } from './dto/update-employee.dto.js';
-//import { Prisma } from 'generated/prisma/browser'; // path where prisma is stored. (use Dto e Rto for the assestment)
-import { Role } from 'generated/prisma/enums.js';
+import { EmployeesService } from './employees.service';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
+//import { Prisma } from '@prisma/client'; // path where prisma is stored. (its used mainly for typization but we use  Dto and Rto for the assestment)
+import { Role } from 'generated/prisma/enums';
 
 @Controller('employees')
 export class EmployeesController {
@@ -11,13 +11,11 @@ export class EmployeesController {
 
   @Post()
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    // Prisma.EmployeeCreateInput is now our DTO, it follows the schema types (we can use DTO for the assestment))
-    // prisma inbuild function. it refers to the schema when we migrate and generate a scheama
     return this.employeesService.create(createEmployeeDto);
   }
 
   @Get()
-  findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
+  findAll(@Query('role') role?: Role /*'INTERN' | 'ENGINEER' | 'ADMIN'*/) {
     return this.employeesService.findAll(role);
   }
 
@@ -28,8 +26,6 @@ export class EmployeesController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
-    // prisma inbuild function. it refers to the schema when we migrate and generate a scheama
-    // we can replace Prisma.EmployeeUpdateInput  with classic DTO
     return this.employeesService.update(+id, updateEmployeeDto);
   }
 

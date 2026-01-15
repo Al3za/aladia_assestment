@@ -1,4 +1,4 @@
-import { Role } from 'generated/prisma/enums.js';
+import { Role } from 'generated/prisma/enums';
 // import { Employee } from 'generated/prisma/browser';
 
 export class EmployeeRto {
