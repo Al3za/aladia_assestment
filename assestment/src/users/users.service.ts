@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 import { NotFoundException } from '@nestjs/common';
 
 @Injectable() //  attach metadata that declares that this class can be manage by Nest, so we can inject that
@@ -44,7 +44,7 @@ export class UsersService {
     if (role) {
       const rolesArray = this.users.filter((user) => user.role === role);
       // eslint-disable-next-line prettier/prettier
-      if (!rolesArray.length) throw new NotFoundException('User Role Not Found'); //status code 404 Not Found (instead of just a string 'Not Found'
+      if (!rolesArray.length) throw new NotFoundException('User Role Not Found'); //status code 404 Not Found (instead of just a string 'Not Found')
       return rolesArray;
       //return this.users.filter((user) => user.role === role); // users = array above, so it can be filtered
     }
