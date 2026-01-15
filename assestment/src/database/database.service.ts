@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client'; // il nostro db client
+import { PrismaClient } from '../generated/client.js'; // 'src/generated/client.js'; //'@prisma/client'; // 'src/generated/client'; ; // il nostro db client
 
 // here we define the connection with prisma db
 @Injectable()
