@@ -1,60 +1,94 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Role } from 'generated/prisma/enums';
 import { EmployeeRto } from './rto/employee.rto';
+import { Prisma } from '@prisma/client';
 //import { Prisma } from '@prisma/client'; can be used as DTO
 
 @Injectable()
 export class EmployeesService {
   constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
 
-  async create(createEmployeeDto: CreateEmployeeDto) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return await this.databaseService.employee.create({
-      // employee = schema/name (lower case)
-      data: createEmployeeDto,
-    });
-  }
-
-  async findAll(role?: Role /*'INTERN' | 'ENGINEER' | 'ADMIN'*/) {
-    if (role)
-      return await this.databaseService.employee.findMany({
-        where: {
-          roles: role,
-        },
+  async create(createEmployeeDto: CreateEmployeeDto): Promise<EmployeeRto> {
+    try {
+      const employee = await this.databaseService.employee.create({
+        data: createEmployeeDto,
       });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return await this.databaseService.employee.findMany();
+      return EmployeeRto.fromPrisma(employee);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        // if we enter a user with same email as one already registered
+        throw new ConflictException('Employee already exists');
+      }
+
+      throw error;
+    }
   }
 
-  async findOne(id: number): Promise<EmployeeRto | null> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const employee = await this.databaseService.employee.findUnique({
-      where: { id },
+  async findAll(role?: Role): Promise<EmployeeRto[]> {
+    const employees = await this.databaseService.employee.findMany({
+      where: role ? { roles: role } : undefined,
       select: { name: true, email: true, roles: true },
-    });
-
-    if (!employee) return null;
-
-    return EmployeeRto.fromPrisma(employee); // RTO
+    }); // in this case we dont need try catch
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    return employees.map(EmployeeRto.fromPrisma);
   }
 
-  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return await this.databaseService.employee.update({
-      where: { id },
-      data: updateEmployeeDto,
-    });
+  async findOne(id: number): Promise<EmployeeRto> {
+    try {
+      const employee = await this.databaseService.employee.findUnique({
+        where: { id },
+        select: { name: true, email: true, roles: true },
+      });
+
+      if (!employee) throw new NotFoundException('User Not Found'); //return null;
+      return EmployeeRto.fromPrisma(employee); // RTO
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          // error throwed if user not found
+          throw new NotFoundException('Employee not found');
+        }
+      }
+      throw error;
+    }
+  }
+
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto): Promise<EmployeeRto> {
+    try {
+      const Employee = await this.databaseService.employee.update({
+        where: { id },
+        data: updateEmployeeDto,
+      });
+
+      return EmployeeRto.fromPrisma(Employee);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          // error throwed if user not found
+          throw new NotFoundException('Employee not found');
+        }
+      }
+      throw error; // error throwed if something else within the DB fails
+    }
   }
 
   async remove(id: number) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return await this.databaseService.employee.delete({
-      where: { id },
-    });
+    try {
+      return await this.databaseService.employee.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          // error throwed if user not found
+          throw new NotFoundException('Employee not found');
+        }
+      }
+      throw error;
+    }
   }
 }
