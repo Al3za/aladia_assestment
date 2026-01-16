@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
 import { CreateEmployeeDto } from '../../../../common/dto/create-employee.dto';
 // import { UpdateEmployeeDto } from 'common/dto/update-employee.dto';
@@ -6,6 +6,8 @@ import { Role } from 'generated/prisma/enums';
 import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
+
 //import { Prisma } from '@prisma/client'; can be also used as DTO
 
 @Injectable()
@@ -13,11 +15,9 @@ export class EmployeesService {
   constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
 
   async create(dto: CreateEmployeeDto): Promise<EmployeeRto> {
-    console.log('hit');
     try {
       const hash_password = await bcrypt.hash(dto.password, 10);
       const employee = await this.databaseService.employee.create({
-        // data: createEmployeeDto,
         data: {
           name: dto.name,
           email: dto.email,
@@ -25,15 +25,17 @@ export class EmployeesService {
           role: dto.role,
         },
       });
-      console.log(dto.password, hash_password, employee);
+      // console.log(dto.password, hash_password, employee);
       return EmployeeRto.fromPrisma(employee);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         // hapens when create a user with same email as one already registered
-        throw new ConflictException('Employee already exists');
+        throw new RpcException({ message: `user email already exist` });
+        //throw new ConflictException('Employee already exists');
       }
 
-      throw error;
+      throw new RpcException({ message: `${error})` });
+      //error;
     }
   }
 
@@ -43,7 +45,7 @@ export class EmployeesService {
       select: { id: true, name: true, email: true, role: true, password: true },
     });
 
-    if (!employee) throw new NotFoundException(`user not found by email: ${email}`);
+    if (!employee) throw new RpcException({ message: `user mot found with email ${email}` }); //new NotFoundException(`user not found by email: ${email}`);
 
     return EmployeeRto.fromPrisma(employee);
   }

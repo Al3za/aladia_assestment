@@ -7,7 +7,7 @@ import { Role } from 'generated/prisma/enums';
 import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { NotFoundException } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
 
 //@Controller('employees')
 @Controller()
@@ -20,22 +20,33 @@ export class EmployeesController {
   //@Post()
   @MessagePattern({ cmd: 'create-employee' }) // Così il controller intercetta i messaggi TCP inviati dalla Gateway.
   async create(createEmployeeDto: CreateEmployeeDto): Promise<EmployeeRto> {
-    console.log('MessagePattern create hit');
     // @body doesnt exist in microservice. comunication are via TCP
-    return await this.employeesService.create(createEmployeeDto);
+    const create_emp = await this.employeesService.create(createEmployeeDto);
+    if (!create_emp)
+      throw new RpcException({
+        statusCode: 404,
+        message: `User email already exist`,
+      });
+    return create_emp;
+    // return await this.employeesService.create(createEmployeeDto);
   }
 
   //@Post()
   @MessagePattern({ cmd: 'login-employee' })
-  async login(Dto: CreateEmployeeDto) {
-    console.log('MessagePattern login hit');
-    console.log(Dto, 'here');
-    // payload necessary to not have truble with tcp
-    const employee = await this.employeesService.findByEmail(Dto.email);
-    if (!employee) throw new NotFoundException(`user not found with email:${Dto.email}`);
-
-    const match = await bcrypt.compare(Dto.password, employee.password);
-    if (!match) throw new NotFoundException('Wrong password');
+  async login(dto: CreateEmployeeDto) {
+    const employee = await this.employeesService.findByEmail(dto.email);
+    if (!employee)
+      throw new RpcException({
+        statusCode: 404,
+        message: `User not found with email: ${dto.email}`,
+      });
+    const match = await bcrypt.compare(dto.password, employee.password);
+    // console.log('match hit');
+    if (!match)
+      throw new RpcException({
+        statusCode: 401,
+        message: 'Wrong password',
+      });
 
     const payload = { sub: employee.id, email: employee.email, role: employee.role }; // create the jwt token(do not insert password here)
     const token = this.jwtService.sign(payload); // we sign jwt with the help of jwtService module we installed.
@@ -46,7 +57,7 @@ export class EmployeesController {
   //@Get()
   @MessagePattern({ cmd: 'get-employees' })
   async findAll(payload: { role?: Role }): Promise<EmployeeRto[]> {
-    console.log('Payload received in microservice:', payload);
+    // console.log('Payload received in microservice:', payload);
     // payload necessary to not have truble with tcp
     return await this.employeesService.findAll(payload.role);
   }
