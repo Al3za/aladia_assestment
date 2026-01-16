@@ -51,8 +51,7 @@ export class GatewayController {
   @Get('users')
   findAll(@Req() req: Request, @Query('role') role?: Role) {
     // const user = req.user as any;
-    // console.log(user);
-    console.log(req, 'check req');
+    // console.log(req, 'check req');
     return this.authClient.send({ cmd: 'get-employees' }, { role });
   }
 }

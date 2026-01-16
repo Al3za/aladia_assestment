@@ -25,7 +25,6 @@ export class EmployeesService {
           role: dto.role,
         },
       });
-      // console.log(dto.password, hash_password, employee);
       return EmployeeRto.fromPrisma(employee);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
