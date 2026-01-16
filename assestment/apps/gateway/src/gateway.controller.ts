@@ -1,14 +1,15 @@
-import { Body, Controller, Get, Inject, Post, Query, ValidationPipe } from '@nestjs/common';
-//import { GatewayService } from './gateway.service';
+import { Body, Controller, Get, Inject, Post, Query, Req, ValidationPipe } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateEmployeeDto } from '../../../common/dto/create-employee.dto';
+import { LoginEmployeeDto } from 'common/dto/login-employee.dto';
 import { Role } from '@prisma/client';
-// import { EmployeeRto } from 'apps/authentication/src/employees/rto/employee.rto'; no need RTO in gateway
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 
 @Controller('auth')
 export class GatewayController {
   constructor(
-    @Inject('AUTH_SERVICE') // the microservice defined in gateway.module
+    @Inject('AUTH_SERVICE') // microservice id defined in gateway.module
     private readonly authClient: ClientProxy,
   ) {}
 
@@ -18,8 +19,19 @@ export class GatewayController {
     return this.authClient.send({ cmd: 'create-employee' }, createEmployeeDto); // pattern and payload
   }
 
+  @Post('login')
+  login(@Body(ValidationPipe) loginEmployeeDto: CreateEmployeeDto) {
+    // send message to microservice
+    console.log('login hit');
+    return this.authClient.send({ cmd: 'login-employee' }, loginEmployeeDto); // pattern and payload
+  }
+
+  @UseGuards(JwtAuthGuard) // only logged-in user can access this route
   @Get('users')
-  findAll(@Query('role') role?: Role) {
+  findAll(@Req() req: Request, @Query('role') role?: Role) {
+    // const user = req.user as any;
+    // console.log(user);
+    console.log(req, 'check req');
     return this.authClient.send({ cmd: 'get-employees' }, { role });
   }
 }

@@ -1,26 +1,35 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
-import { CreateEmployeeDto } from 'common/dto/create-employee.dto';
+import { CreateEmployeeDto } from '../../../../common/dto/create-employee.dto';
 // import { UpdateEmployeeDto } from 'common/dto/update-employee.dto';
 import { Role } from 'generated/prisma/enums';
 import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { Prisma } from '@prisma/client';
-//import { Prisma } from '@prisma/client'; can be used as DTO
+import * as bcrypt from 'bcrypt';
+//import { Prisma } from '@prisma/client'; can be also used as DTO
 
 @Injectable()
 export class EmployeesService {
   constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
 
-  async create(createEmployeeDto: CreateEmployeeDto): Promise<EmployeeRto> {
+  async create(dto: CreateEmployeeDto): Promise<EmployeeRto> {
+    console.log('hit');
     try {
+      const hash_password = await bcrypt.hash(dto.password, 10);
       const employee = await this.databaseService.employee.create({
-        data: createEmployeeDto,
+        // data: createEmployeeDto,
+        data: {
+          name: dto.name,
+          email: dto.email,
+          password: hash_password,
+          role: dto.role,
+        },
       });
-
+      console.log(dto.password, hash_password, employee);
       return EmployeeRto.fromPrisma(employee);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        // if we enter a user with same email as one already registered
+        // hapens when create a user with same email as one already registered
         throw new ConflictException('Employee already exists');
       }
 
@@ -28,10 +37,21 @@ export class EmployeesService {
     }
   }
 
+  async findByEmail(email: string): Promise<EmployeeRto> {
+    const employee = await this.databaseService.employee.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true, role: true, password: true },
+    });
+
+    if (!employee) throw new NotFoundException(`user not found by email: ${email}`);
+
+    return EmployeeRto.fromPrisma(employee);
+  }
+
   async findAll(role?: Role): Promise<EmployeeRto[]> {
     const employees = await this.databaseService.employee.findMany({
-      where: role ? { roles: role } : undefined,
-      select: { name: true, email: true, roles: true },
+      where: role ? { role: role } : undefined,
+      select: { id: true, name: true, email: true, role: true },
     }); // in this case we dont need try catch
     // eslint-disable-next-line @typescript-eslint/unbound-method
     return employees.map(EmployeeRto.fromPrisma);

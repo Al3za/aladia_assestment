@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { GatewayController } from './gateway.controller';
 //import { GatewayService } from './gateway.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CoreModule } from 'core/core.module';
 
 @Module({
   imports: [
+    CoreModule, // for jwt
     ClientsModule.register([
       {
         name: 'AUTH_SERVICE',
