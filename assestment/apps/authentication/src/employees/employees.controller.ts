@@ -1,12 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { EmployeesService } from './employees.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto } from 'common/dto/create-employee.dto';
 // import { UpdateEmployeeDto } from './dto/update-employee.dto';
 //import { Prisma } from '@prisma/client'; // path where prisma is stored. (its used mainly for typization but we use  Dto and Rto for the assestment)
 import { Role } from 'generated/prisma/enums';
 // import { ParseIntPipe, ValidationPipe } from '@nestjs/common';
-import { EmployeeRto } from './rto/employee.rto';
+import { EmployeeRto } from '../../../../common/rto/employee.rto';
 
 //@Controller('employees')
 @Controller()
