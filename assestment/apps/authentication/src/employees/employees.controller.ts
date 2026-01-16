@@ -41,7 +41,6 @@ export class EmployeesController {
         message: `User not found with email: ${dto.email}`,
       });
     const match = await bcrypt.compare(dto.password, employee.password);
-    // console.log('match hit');
     if (!match)
       throw new RpcException({
         statusCode: 401,
@@ -57,7 +56,6 @@ export class EmployeesController {
   //@Get()
   @MessagePattern({ cmd: 'get-employees' })
   async findAll(payload: { role?: Role }): Promise<EmployeeRto[]> {
-    // console.log('Payload received in microservice:', payload);
     // payload necessary to not have truble with tcp
     return await this.employeesService.findAll(payload.role);
   }
