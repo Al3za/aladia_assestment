@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Post, Query, ValidationPipe } from '@nestjs/common';
 //import { GatewayService } from './gateway.service';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto } from '../../../common/dto/create-employee.dto';
 import { Role } from '@prisma/client';
 // import { EmployeeRto } from 'apps/authentication/src/employees/rto/employee.rto'; no need RTO in gateway
 

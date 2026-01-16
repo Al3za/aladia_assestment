@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { CreateEmployeeDto } from 'common/dto/create-employee.dto';
+// import { UpdateEmployeeDto } from 'common/dto/update-employee.dto';
 import { Role } from 'generated/prisma/enums';
-import { EmployeeRto } from './rto/employee.rto';
+import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { Prisma } from '@prisma/client';
 //import { Prisma } from '@prisma/client'; can be used as DTO
 
