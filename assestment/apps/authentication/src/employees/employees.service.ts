@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { DatabaseService } from '../database/database.service'; //'src/database/database.service'; //  here we talk to the database service
+import { DatabaseService } from '../../../../config/database/database.service'; //'src/database/database.service'; //  here we talk to the database service
 import { CreateEmployeeDto } from '../../../../common/dto/create-employee.dto';
 // import { UpdateEmployeeDto } from 'common/dto/update-employee.dto';
 import { Role } from 'generated/prisma/enums';
