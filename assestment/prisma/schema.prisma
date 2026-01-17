@@ -19,7 +19,7 @@ model Employee {
   email     String   @unique
   name      String   
   role      Role     @default(INTERN)
-  password  String
+  password  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -44,3 +44,6 @@ enum Role {
 // npx prisma migrate dev --name name_change(a different commit name), to save and commit db changes up to date w
 
 // -- migration transate prisma syntax to sql syntax (remember that if you comment the migration.file, it could be blocked you to generete another migration)
+
+// npx prisma migrate reset  (to reset all migration in case there are conflicts when migrating/generatin changes. 
+// Be carefull, data will be lost, use it in dev)
