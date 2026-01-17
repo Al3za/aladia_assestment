@@ -7,7 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
     ThrottlerModule.forRoot([
       // rate limit middleware
       { name: 'default', ttl: 60_000, limit: 10 },
-      { name: 'auth', ttl: 60_000, limit: 1 },
+      { name: 'auth', ttl: 60_000, limit: 5 },
     ]),
   ],
   providers: [
