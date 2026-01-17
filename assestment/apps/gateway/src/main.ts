@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { GatewayModule } from './gateway.module';
-import { RpcToHttpExceptionFilter } from 'core/filters/rpc-to-http-exception.filter';
+// import { RpcToHttpExceptionFilter } from 'core/filters/rpc-to-http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);

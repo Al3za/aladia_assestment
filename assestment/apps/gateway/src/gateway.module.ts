@@ -3,10 +3,27 @@ import { GatewayController } from './gateway.controller';
 //import { GatewayService } from './gateway.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CoreModule } from 'core/core.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'; // implement rate limit
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
-    CoreModule, // for jwt
+    ThrottlerModule.forRoot({
+      // rate limit middleware
+      throttlers: [
+        {
+          name: 'default',
+          ttl: 60,
+          limit: 10,
+        },
+        {
+          name: 'auth',
+          ttl: 60,
+          limit: 5,
+        },
+      ],
+    }),
+    CoreModule, // for jwt(guards, strategies)
     ClientsModule.register([
       {
         name: 'AUTH_SERVICE',
@@ -17,6 +34,12 @@ import { CoreModule } from 'core/core.module';
         },
       },
     ]),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD, // Guard is executed GLOBALY on all routes before http hits controller endpoin. Otherwise we should use @UseGuards() on all endpoint
+      useClass: ThrottlerGuard, // ThrottlerGuard is the rate limit engine. it checks IP adress, enpoints, number of request. If we go behind what the limit it stops the request with 429 error
+    },
   ],
   controllers: [GatewayController],
 })

@@ -1,6 +1,5 @@
 import {
   Body,
-  Catch,
   Controller,
   Get,
   Inject,
@@ -12,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateEmployeeDto } from '../../../common/dto/create-employee.dto';
-import { LoginEmployeeDto } from 'common/dto/login-employee.dto';
 import { Role } from '@prisma/client';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { catchError } from 'rxjs';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class GatewayController {
@@ -26,6 +25,13 @@ export class GatewayController {
   ) {}
 
   @Post('register')
+  @Throttle({
+    auth: {
+      limit: 1,
+      ttl: 60,
+    },
+  })
+  //@Throttle({ auth: {} }) // 5 requests / minute (for each user). // override global rate limit (10 req / 60 sec)
   create(@Body(ValidationPipe) createEmployeeDto: CreateEmployeeDto) {
     // send message to microservice
     return this.authClient.send({ cmd: 'create-employee' }, createEmployeeDto).pipe(
@@ -37,6 +43,13 @@ export class GatewayController {
   }
 
   @Post('login')
+  @Throttle({
+    auth: {
+      limit: 1,
+      ttl: 60,
+    },
+  })
+  //@Throttle({ auth: {} }) // override global rate limit (10 req / 60 sec)
   login(@Body(ValidationPipe) loginEmployeeDto: CreateEmployeeDto) {
     // send message to microservice
     return this.authClient.send({ cmd: 'login-employee' }, loginEmployeeDto).pipe(
@@ -47,11 +60,15 @@ export class GatewayController {
     );
   }
 
-  @UseGuards(JwtAuthGuard) // only logged-in user can access this route
-  @Get('users')
+  @UseGuards(JwtAuthGuard) // only logged-in user can access this route.
+  @Get('users') //  global rate limit applies here
   findAll(@Req() req: Request, @Query('role') role?: Role) {
     // const user = req.user as any;
     // console.log(req, 'check req');
     return this.authClient.send({ cmd: 'get-employees' }, { role });
   }
+
+  // @SkipThrottle() no rate limit for this route
+  // @Get('test')
+  // health() {}
 }

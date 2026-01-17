@@ -8,8 +8,6 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
 
-//import { Prisma } from '@prisma/client'; can be also used as DTO
-
 @Injectable()
 export class EmployeesService {
   constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
@@ -32,9 +30,7 @@ export class EmployeesService {
         throw new RpcException({ message: `user email already exist` });
         //throw new ConflictException('Employee already exists');
       }
-
       throw new RpcException({ message: `${error})` });
-      //error;
     }
   }
 
