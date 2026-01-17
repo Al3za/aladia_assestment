@@ -26,10 +26,7 @@ export class GatewayController {
 
   @Post('register')
   @Throttle({
-    auth: {
-      limit: 1,
-      ttl: 60,
-    },
+    auth: {},
   })
   //@Throttle({ auth: {} }) // 5 requests / minute (for each user). // override global rate limit (10 req / 60 sec)
   create(@Body(ValidationPipe) createEmployeeDto: CreateEmployeeDto) {
@@ -44,10 +41,7 @@ export class GatewayController {
 
   @Post('login')
   @Throttle({
-    auth: {
-      limit: 1,
-      ttl: 60,
-    },
+    auth: {},
   })
   //@Throttle({ auth: {} }) // override global rate limit (10 req / 60 sec)
   login(@Body(ValidationPipe) loginEmployeeDto: CreateEmployeeDto) {
