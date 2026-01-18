@@ -20,7 +20,7 @@ import { SkipThrottle, Throttle } from '@nestjs/throttler';
 @Controller('auth')
 export class GatewayController {
   constructor(
-    @Inject('AUTH_SERVICE') // microservice id defined in gateway.module
+    @Inject('AUTH_SERVICE') // connection with microservice by id name. (name defined in gateway.module)
     private readonly authClient: ClientProxy,
   ) {}
 
