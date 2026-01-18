@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { jwtConfig } from 'config/jwt/jwt.config';
-// import { CreateEmployeeDto } from 'common/dto/create-employee.dto';
+import { JwtValidatedUser } from 'common/interfaces/interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,10 +19,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: any) {
-    // verify signature
+  validate(payload: any): JwtValidatedUser {
     // here returns data we defined in jwt.sign()
-    // quello che ritorni qui finisce in req.user
+    // this data can you access in req.user in controllers
     return {
       userId: payload.sub,
       email: payload.email,

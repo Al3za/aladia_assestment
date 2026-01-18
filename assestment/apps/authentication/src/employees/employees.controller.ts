@@ -8,6 +8,7 @@ import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
+import { LoginEmployeeDto } from 'common/dto/login-employee.dto';
 
 //@Controller('employees')
 @Controller()
@@ -27,13 +28,12 @@ export class EmployeesController {
         statusCode: 404,
         message: `User email already exist`,
       });
-    return create_emp;
-    // return await this.employeesService.create(createEmployeeDto);
+    return EmployeeRto.fromPrisma(create_emp);
   }
 
   //@Post()
   @MessagePattern({ cmd: 'login-employee' })
-  async login(dto: CreateEmployeeDto) {
+  async login(dto: LoginEmployeeDto): Promise<object> {
     const employee = await this.employeesService.findByEmail(dto.email);
     if (!employee)
       throw new RpcException({
@@ -60,26 +60,4 @@ export class EmployeesController {
     // payload necessary to not have truble with tcp
     return await this.employeesService.findAll(payload.role);
   }
-
-  // //@Get(':id')
-  // @MessagePattern({ cmd: 'find-employee' })
-  // findOne(@Param('id', ParseIntPipe) id: number) {
-  //   return this.employeesService.findOne(id);
-  // }
-
-  // //@Patch(':id')
-  // @MessagePattern({ cmd: 'update-employee' })
-  // update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body(ValidationPipe)
-  //   updateEmployeeDto: UpdateEmployeeDto,
-  // ) {
-  //   return this.employeesService.update(id, updateEmployeeDto);
-  // }
-
-  // //  @Delete(':id')
-  // @MessagePattern({ cmd: 'delete-employee' })
-  // remove(@Param('id', ParseIntPipe) id: number) {
-  //   return this.employeesService.remove(id);
-  // }
 }

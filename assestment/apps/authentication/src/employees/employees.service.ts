@@ -7,6 +7,7 @@ import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
+import { findByEmailRto } from 'common/rto/findByEmail.rto';
 // import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -38,7 +39,7 @@ export class EmployeesService {
     }
   }
 
-  async findByEmail(email: string): Promise<EmployeeRto> {
+  async findByEmail(email: string): Promise<findByEmailRto> {
     const employee = await this.databaseService.employee.findUnique({
       where: { email },
       select: { id: true, name: true, email: true, role: true, password: true },
@@ -46,7 +47,7 @@ export class EmployeesService {
 
     if (!employee) throw new RpcException({ message: `user mot found with email ${email}` }); //new NotFoundException(`user not found by email: ${email}`);
 
-    return EmployeeRto.fromPrisma(employee);
+    return findByEmailRto.fromPrisma(employee); //EmployeeRto.fromPrisma(employee);
   }
 
   async findAll(role?: Role): Promise<EmployeeRto[]> {

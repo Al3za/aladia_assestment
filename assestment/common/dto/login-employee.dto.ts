@@ -1,4 +1,11 @@
-import { CreateEmployeeDto } from './create-employee.dto';
-import { PartialType } from '@nestjs/mapped-types'; //  npm i @nestjs/mapped-types -d
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'; // gives an error if you don 't follow the rules (ex if you write a not formatted email)
 
-export class LoginEmployeeDto extends PartialType(CreateEmployeeDto) {}
+export class LoginEmployeeDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  password: string;
+}
