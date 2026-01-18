@@ -16,6 +16,8 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { catchError } from 'rxjs';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+// import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'; // implement rate limit
+// import { APP_GUARD } from '@nestjs/core';
 
 @Controller('auth')
 export class GatewayController {
@@ -54,7 +56,7 @@ export class GatewayController {
     );
   }
 
-  @UseGuards(JwtAuthGuard) // only logged-in user can access this route.
+  @UseGuards(JwtAuthGuard) // only logged-in user can access this route. JwtAuthGuard is a extension of a jwt function defined in core/strategy, and works smoothly because we we imported CoreModule in app.module.ts, where those functions are defined)
   @Get('users') //  global rate limit applies here
   findAll(@Req() req: Request, @Query('role') role?: Role) {
     // const user = req.user as any;
