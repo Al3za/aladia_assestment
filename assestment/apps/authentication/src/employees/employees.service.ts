@@ -7,10 +7,14 @@ import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
+// import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
+  constructor(
+    // private readonly jwtService: JwtService,
+    private readonly databaseService: DatabaseService,
+  ) {} // connecting to database service
 
   async create(dto: CreateEmployeeDto): Promise<EmployeeRto> {
     try {

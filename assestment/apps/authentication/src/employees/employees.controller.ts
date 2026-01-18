@@ -49,7 +49,8 @@ export class EmployeesController {
 
     const payload = { sub: employee.id, email: employee.email, role: employee.role }; // create the jwt token(do not insert password here)
     const token = this.jwtService.sign(payload); // we sign jwt with the help of jwtService module we installed.
-    // secret_key and signOptions defined globaly in EmployeesModule
+    // secret_key and signOptions defined globaly in EmployeesModule.
+    // we can sign smoothly with jwtService because in authentication.module.ts we import jwt configuration defined in core.module
     return { access_token: token }; // this token has to be stored in the request to enter the route 'users'
   }
 

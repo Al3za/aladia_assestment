@@ -3,7 +3,8 @@ import { EmployeesModule } from './employees/employees.module';
 import { DatabaseModule } from '../../../config/database/database.module';
 
 @Module({
-  imports: [EmployeesModule, DatabaseModule], //   CoreModule,       // 👈 JWT configurato UNA SOLA VOLTA
-  //   EmployeesModule,
+  imports: [EmployeesModule, DatabaseModule],
 })
 export class AuthenticationModule {}
+
+// CoreModule contains different function defined in CoreModule exports( [JwtStrategy, JwtModule, rateLimitModule])
