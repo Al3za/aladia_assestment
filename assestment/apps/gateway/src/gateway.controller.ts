@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Body,
   Controller,
@@ -16,7 +17,6 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { catchError } from 'rxjs';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { EmployeeRto } from 'common/rto/employee.rto';
 import { LoginEmployeeDto } from 'common/dto/login-employee.dto';
 
 @Controller('auth')
@@ -34,9 +34,8 @@ export class GatewayController {
     // send message to microservice
     return this.authClient.send({ cmd: 'create-employee' }, createEmployeeDto).pipe(
       catchError((err) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         throw new UnauthorizedException(err.message);
-      }),
+      }), // catch RpcException errors from microservices
     );
   }
 
@@ -48,7 +47,6 @@ export class GatewayController {
     // send message to microservice
     return this.authClient.send({ cmd: 'login-employee' }, loginEmployeeDto).pipe(
       catchError((err) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         throw new UnauthorizedException(err.message);
       }), // catch RpcException errors from microservices
     );
@@ -58,7 +56,7 @@ export class GatewayController {
   @Get('users') //  global rate limit applies here
   findAll(@Req() req: Request, @Query('role') role?: Role) {
     // const user = req.user as any;
-    // console.log(req, 'check req');
+    // console.log(req, 'check req'); access logged in jwt user data
     return this.authClient.send({ cmd: 'get-employees' }, { role });
   }
 

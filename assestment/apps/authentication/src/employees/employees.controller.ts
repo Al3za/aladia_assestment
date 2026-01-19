@@ -3,14 +3,12 @@ import { MessagePattern } from '@nestjs/microservices';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from 'common/dto/create-employee.dto';
 import { Role } from 'generated/prisma/enums';
-// import { ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { EmployeeRto } from '../../../../common/rto/employee.rto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
 import { LoginEmployeeDto } from 'common/dto/login-employee.dto';
 
-//@Controller('employees')
 @Controller()
 export class EmployeesController {
   constructor(
@@ -19,7 +17,7 @@ export class EmployeesController {
   ) {}
 
   //@Post()
-  @MessagePattern({ cmd: 'create-employee' }) // Così il controller intercetta i messaggi TCP inviati dalla Gateway.
+  @MessagePattern({ cmd: 'create-employee' }) // get TCP messagges from Gateway.
   async create(createEmployeeDto: CreateEmployeeDto): Promise<EmployeeRto> {
     // @body doesnt exist in microservice. comunication are via TCP
     const create_emp = await this.employeesService.create(createEmployeeDto);
@@ -44,7 +42,7 @@ export class EmployeesController {
     if (!match)
       throw new RpcException({
         statusCode: 401,
-        message: 'Wrong password',
+        message: 'Wrong password, please try again',
       });
 
     const payload = { sub: employee.id, email: employee.email, role: employee.role }; // create the jwt token(do not insert password here)

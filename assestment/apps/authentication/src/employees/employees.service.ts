@@ -1,4 +1,5 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/unbound-method */
+import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../../../../config/database/database.service'; //'src/database/database.service'; //  here we talk to the database service
 import { CreateEmployeeDto } from '../../../../common/dto/create-employee.dto';
 // import { UpdateEmployeeDto } from 'common/dto/update-employee.dto';
@@ -8,14 +9,10 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices'; // use this in microservices to throw errors
 import { findByEmailRto } from 'common/rto/findByEmail.rto';
-// import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class EmployeesService {
-  constructor(
-    // private readonly jwtService: JwtService,
-    private readonly databaseService: DatabaseService,
-  ) {} // connecting to database service
+  constructor(private readonly databaseService: DatabaseService) {} // connecting to database service
 
   async create(dto: CreateEmployeeDto): Promise<EmployeeRto> {
     try {
@@ -33,7 +30,6 @@ export class EmployeesService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         // hapens when create a user with same email as one already registered
         throw new RpcException({ message: `user email already exist` });
-        //throw new ConflictException('Employee already exists');
       }
       throw new RpcException({ message: `${error})` });
     }
@@ -45,9 +41,9 @@ export class EmployeesService {
       select: { id: true, name: true, email: true, role: true, password: true },
     });
 
-    if (!employee) throw new RpcException({ message: `user mot found with email ${email}` }); //new NotFoundException(`user not found by email: ${email}`);
+    if (!employee) throw new RpcException({ message: `email: ${email} not found ` });
 
-    return findByEmailRto.fromPrisma(employee); //EmployeeRto.fromPrisma(employee);
+    return findByEmailRto.fromPrisma(employee);
   }
 
   async findAll(role?: Role): Promise<EmployeeRto[]> {
@@ -55,7 +51,7 @@ export class EmployeesService {
       where: role ? { role: role } : undefined,
       select: { id: true, name: true, email: true, role: true },
     }); // in this case we dont need try catch
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+
     return employees.map(EmployeeRto.fromPrisma);
   }
 }
