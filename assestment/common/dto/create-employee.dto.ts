@@ -1,12 +1,4 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MinLength,
-  minLength,
-} from 'class-validator'; // gives an error if you don 't follow the rules (ex if you write a not formatted email)
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Matches, MinLength } from 'class-validator'; // gives an error if you don 't follow the rules (ex if you write a not formatted email)
 import { Role } from 'generated/prisma/enums'; // it create a reference to the schema role so if role change on schema it ll refears automatically on this role here, without adding new roles manually in this file
 
 export class CreateEmployeeDto {

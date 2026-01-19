@@ -2,7 +2,7 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 
 export const corsConfig: CorsOptions = {
   origin: [
-    // domains allowed listed here
+    // domains allowed listed here. Store it in .env in production
     'http://localhost:5173', // frontend dev
     'https://myapp.com', // production
   ],

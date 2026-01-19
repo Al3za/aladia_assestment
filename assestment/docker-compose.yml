@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nest_app
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  authentication:
+    build:
+      context: .
+      dockerfile: apps/authentication/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest_app
+      JWT_SECRET: super-secret-key
+    depends_on:
+      - postgres
+    ports:
+      - '3001:3001'
+
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile
+    environment:
+      JWT_SECRET: super-secret-key
+    depends_on:
+      - authentication
+    ports:
+      - '3000:3000'
+
+volumes:
+  postgres-data:
