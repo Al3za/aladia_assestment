@@ -60,14 +60,16 @@ config/ # Configuration files: microservice & database configurations
     ADMIN
   }
 
-  🚀 Running the Application
-Prerequisites
+# 🚀 Running the Application
+
+## Prerequisites
 
 Node.js >= 20
 
 PostgreSQL
 
-Docker & Docker Compose (optional, for containerized setup)
+
+# Docker & Docker Compose (optional, for containerized setup)
 
 Local Development
 
@@ -76,16 +78,17 @@ Install dependencies:
 npm install
 
 
-Start Authentication microservice:
+# Start Authentication microservice:
 
 cd apps/authentication
 npm run start:dev
 
 
-Start Gateway:
+# Start Gateway:
 cd apps/gateway
 npm run start:dev
-Test endpoints via Postman or ThunderClient:
+
+# Test endpoints via Postman or ThunderClient:
 
 POST /auth/register
 
@@ -93,14 +96,14 @@ POST /auth/login
 
 GET /auth/users (requires JWT token in Authorization: Bearer <token>)
 
-Docker Setup
+# Docker Setup
 
 Build and run the app with Docker Compose:
 
 docker-compose up --build
 
 
-Services:
+# Services:
 
 gateway – HTTP server (port 3000)
 
@@ -108,7 +111,8 @@ authentication – TCP microservice (port 3001)
 
 postgres – Database (port 5432)
 
-🛡️ Security & Features
+
+# 🛡️ Security & Features
 
 JWT-based authentication and authorization
 
@@ -120,7 +124,8 @@ Centralized logging (optional)
 
 Modular and scalable architecture
 
-📝 Notes
+
+# 📝 Notes
 
 The gateway communicates with the microservice via TCP using NestJS ClientProxy.
 
@@ -128,7 +133,7 @@ All shared DTOs and RTOs are in the common folder for reusability.
 
 Environment variables (like JWT_SECRET and DATABASE_URL) are used for configuration.
 
-📌 References
+# 📌 References
 
 NestJS Microservices
 
