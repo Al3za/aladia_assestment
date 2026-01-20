@@ -1,42 +1,48 @@
 version: '3.9'
 services:
   postgres:
-    image: postgres:15
-    environment:
+    image: postgres:15 # l’immagine ufficiale di Postgres versione 15.
+    environment: # definisce le .env var all interno del container
+      # Queste sotto sono **variabili d’ambiente **che l’immagine ufficiale di Postgres legge all’avvio del container.
+      # ( usate dentro questo file: postgres://postgres:postgres@postgres:5432/nest_app)
+      # servono a creare in istanza del db postgres che usiamo in docker. Creiamo un db nella mackina docker
+      # cosi possiamo usarlo anche quando non c'e' connessione. Utile per dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nest_app
     ports:
-      - '5432:5432'
-    volumes:
+      - '5432:5432' # espone la porta 5432 del container sulla porta 5432 della macchina host
+    volumes: # persiste i dati del DB anche se il container viene cancellato:
       - postgres-data:/var/lib/postgresql/data
 
-  authentication:
+  authentication: # Docker assegna automaticamente network interna ai container, come folders e files in vsCode
     build:
       context: .
-      dockerfile: apps/authentication/Dockerfile
+      dockerfile: apps/authentication/Dockerfile # trova il file docker entro "cartella" creata da docker durante il build
     env_file:
-      - .env
+      - .env # reads all .env values in the app (no need to mention key values like below)
     # environment:
     #   DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest_app
     #   JWT_SECRET: super-secret-key
     depends_on:
-      - postgres
+      - postgres # nome del servizio del container per trovare il container dentro la rete interna creata da docker
     ports:
       - '3001:3001'
 
-  gateway:
+  gateway: # Docker assegna automaticamente network interna ai container, come folders e files in vsCode
     build:
       context: .
       dockerfile: apps/gateway/Dockerfile
-    .env_file:
+    env_file:
       - .env
     # environment:
     #   JWT_SECRET: super-secret-key
     depends_on:
-      - authentication
+      - authentication # nome del servizio del container per trovare il container dentro la rete interna creata da docker
     ports:
       - '3000:3000'
 
 volumes:
   postgres-data:
+
+# run docker-compose build at the first build, or when a change is made in the app
