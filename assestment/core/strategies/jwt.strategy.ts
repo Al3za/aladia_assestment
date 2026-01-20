@@ -11,13 +11,15 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
-    const jwtConfig = jwtConfigFactory(configService);
+    const jwtConfig = jwtConfigFactory(configService); // call jwtConfigFactory function containing
+    // full loaded secret value(.env.JWT_SECRET). ConfigService must be use even here for this operation
+    // no error thrown related to process.env.JWT_SECRET = undefined, because as said before, ConfigService loads .env at run time and not at import time
+    // "ConfigService make process.env values fully loaded at import-time"
     super({
-      // here verifies the  jwt tokens
+      // here separate and verifies jwt tokens (jwt.verify(token))
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // separate token from bearer
       ignoreExpiration: false,
-      secretOrKey: jwtConfig.secret, //configService.get<string>('JWT_SECRET')!, // jwtConfig.secret,
-      // secretOrKey: process.env.JWT_SECRET || 'super-secret-key', // here it verify the token (jsonwebtoken.verify(token, secret));
+      secretOrKey: jwtConfig.secret,
     });
   }
 
