@@ -1,25 +1,17 @@
 import { Module } from '@nestjs/common';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { StringValue } from 'ms';
+// import { ConfigModule, ConfigService } from '@nestjs/config';
+// import { StringValue } from 'ms';
+import { AppConfigModule } from 'config/app-config.module';
+import { JwtConfigModule } from 'config/jwt/jwt.module';
 
 @Module({
-  imports: [
-    ConfigModule, // necessary for access ConfigService
-    JwtModule.registerAsync({
-      imports: [ConfigModule], // make sure ConfigService is available
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET')!, // secure, not "undefined"
-        signOptions: {
-          expiresIn: configService.get<StringValue>('JWT_EXPIRES_IN') || '1h',
-        },
-      }),
-    }),
-  ],
-  providers: [JwtStrategy],
-  exports: [JwtStrategy, JwtModule],
+  imports: [AppConfigModule, JwtConfigModule],
+  providers: [JwtStrategy], // JwtStrategy is for  verify (jwt.verify(token))
+  exports: [JwtStrategy, JwtModule], // JwtModule = the one we registered ( JwtModule.registerAsync)
+  // JwtStrategy (for jwt.verify(token))
+  // JwtModule = the one we registered ( JwtModule.registerAsync), for jwt.sign() only
 })
 export class CoreModule {}
 

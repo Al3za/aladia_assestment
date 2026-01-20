@@ -15,9 +15,11 @@ services:
     build:
       context: .
       dockerfile: apps/authentication/Dockerfile
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest_app
-      JWT_SECRET: super-secret-key
+    env_file:
+      - .env
+    # environment:
+    #   DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest_app
+    #   JWT_SECRET: super-secret-key
     depends_on:
       - postgres
     ports:
@@ -27,8 +29,10 @@ services:
     build:
       context: .
       dockerfile: apps/gateway/Dockerfile
-    environment:
-      JWT_SECRET: super-secret-key
+    .env_file:
+      - .env
+    # environment:
+    #   JWT_SECRET: super-secret-key
     depends_on:
       - authentication
     ports:

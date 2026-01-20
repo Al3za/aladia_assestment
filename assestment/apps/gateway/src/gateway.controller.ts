@@ -52,7 +52,7 @@ export class GatewayController {
     );
   }
 
-  @UseGuards(JwtAuthGuard) // only logged-in user can access this route. JwtAuthGuard is a extension of a jwt function defined in core/strategy, and works smoothly because we we imported CoreModule in app.module.ts, where those functions are defined)
+  @UseGuards(JwtAuthGuard) // only logged-in user can access this route. JwtAuthGuard is a extension of a jwt function defined in core/strategy, where jwt token is verified (like "jwt.verfy(token)") with "PassportStrategy"
   @Get('users') //  global rate limit applies here
   findAll(@Req() req: Request, @Query('role') role?: Role) {
     // const user = req.user as any;

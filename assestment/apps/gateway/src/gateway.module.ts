@@ -5,7 +5,7 @@ import { authMicroserviceClientConfig } from '../../../config/microservices/auth
 @Module({
   imports: [
     ClientsModule.register([
-      // connection with microservice
+      // registers and connect with the microservices
       authMicroserviceClientConfig,
     ]),
   ],
