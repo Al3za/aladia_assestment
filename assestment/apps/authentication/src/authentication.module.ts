@@ -6,5 +6,3 @@ import { DatabaseModule } from '../../../config/database/database.module';
   imports: [EmployeesModule, DatabaseModule],
 })
 export class AuthenticationModule {}
-
-// CoreModule contains different function defined in CoreModule exports( [JwtStrategy, JwtModule, rateLimitModule])

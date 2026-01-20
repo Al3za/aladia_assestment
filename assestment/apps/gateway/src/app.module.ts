@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CoreModule } from 'core/core.module';
-// import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'; // implement rate limit
-// import { APP_GUARD } from '@nestjs/core';
 import { GatewayModule } from './gateway.module';
 import { rateLimitModule } from 'core/rateLimit/rate_limit';
 
@@ -14,7 +12,7 @@ import { rateLimitModule } from 'core/rateLimit/rate_limit';
 })
 export class AppModule {}
 
-// AUTH_SERVICE è solo un token DI, non il nome del microservizio.
+// AUTH_SERVICE its a token id, not microservice name.
 
 // run  nest start gateway --watch to open gateway connection ( it opens tnx to nest-cli.json file)
 

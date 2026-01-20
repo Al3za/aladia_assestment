@@ -16,7 +16,7 @@ async function bootstrap() {
 }
 void bootstrap();
 
-// ora il microservizio non espone più HTTP, ma riceve messaggi TCP dal Gateway.
+// microservizio dont serve HTTP, but it comunicate by messagges TCP messages from Gateway.
 
 // run  nest start authentication --watch to open authentication microservice ( it opens tnx to nest-cli.json file)
 

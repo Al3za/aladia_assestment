@@ -9,10 +9,6 @@ export class CreateEmployeeDto {
   @IsEmail()
   email: string;
 
-  // @IsEnum(['INTERN', 'ENGINEER', 'ADMIN'], {
-  //   message: 'Valid role required',
-  // })
-  // role: 'INTERN' | 'ENGINEER' | 'ADMIN';
   @IsEnum(Role, { message: 'Valid role required' })
   role: Role;
 

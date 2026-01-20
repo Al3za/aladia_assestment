@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-// import { JwtModule } from '@nestjs/jwt';
 import { EmployeesService } from './employees.service';
 import { EmployeesController } from './employees.controller';
 import { CoreModule } from 'core/core.module';

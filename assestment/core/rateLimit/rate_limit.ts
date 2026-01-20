@@ -16,6 +16,6 @@ import { APP_GUARD } from '@nestjs/core';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [ThrottlerModule], // se altri moduli vogliono usarlo
+  exports: [ThrottlerModule],
 })
 export class rateLimitModule {}
