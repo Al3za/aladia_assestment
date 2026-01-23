@@ -13,12 +13,12 @@ common/ # Shared DTOs, RTOs, enums used across apps
 core/ # Core utilities: JWT strategy, guards, rate limiting, CORS
 config/ # Configuration files: microservice & database configurations
 
-
 ---
 
 ## ⚡ Features
 
 ### Gateway
+
 - Exposes HTTP endpoints for client requests:
   - `POST /auth/register` – Register a new user
   - `POST /auth/login` – Login user and return JWT token
@@ -28,12 +28,14 @@ config/ # Configuration files: microservice & database configurations
 - TCP communication with Authentication microservice
 
 ### Authentication Microservice
+
 - Handles **user management** and database access via Prisma
 - Hashes passwords with bcrypt before storing in the database
 - JWT token generation for authentication
 - TCP server that listens for commands from the gateway
 
 ### Common / Core
+
 - Shared DTOs, RTOs, enums
 - Core modules provide:
   - JWT strategy and guard
@@ -41,8 +43,10 @@ config/ # Configuration files: microservice & database configurations
   - CORS configuration
 
 ### Database
+
 - PostgreSQL database managed via Prisma
 - Employee model:
+
   ```prisma
   model Employee {
     id        Int      @id @default(autoincrement())
@@ -59,6 +63,7 @@ config/ # Configuration files: microservice & database configurations
     ENGINEER
     ADMIN
   }
+  ```
 
 # 🚀 Running the Application
 
@@ -68,7 +73,6 @@ Node.js >= 20
 
 PostgreSQL
 
-
 # Docker & Docker Compose (optional, for containerized setup)
 
 Local Development
@@ -77,16 +81,20 @@ Install dependencies:
 
 npm install
 
+P.S. change .env AUTH_SERVICE_HOST:authentication when run the app on docker
 
 # Start Authentication microservice:
 
-cd apps/authentication
-npm run start:dev
-
+cd assestment
+nest start authentication --watch (dev mode)
 
 # Start Gateway:
-cd apps/gateway
-npm run start:dev
+
+<!-- cd apps/gateway
+npm run start:dev -->
+
+cd assestment
+nest start gateway --watch (dev mode)
 
 # Test endpoints via Postman or ThunderClient:
 
@@ -102,7 +110,6 @@ Build and run the app with Docker Compose:
 
 docker-compose up --build
 
-
 # Services:
 
 gateway – HTTP server (port 3000)
@@ -110,7 +117,6 @@ gateway – HTTP server (port 3000)
 authentication – TCP microservice (port 3001)
 
 postgres – Database (port 5432)
-
 
 # 🛡️ Security & Features
 
@@ -123,7 +129,6 @@ CORS configuration for allowed origins
 Centralized logging (optional)
 
 Modular and scalable architecture
-
 
 # 📝 Notes
 
@@ -142,4 +147,3 @@ NestJS Throttler (Rate Limiting)
 NestJS JWT Authentication
 
 Prisma ORM
-
